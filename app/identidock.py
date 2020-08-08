@@ -2,6 +2,7 @@ from flask import Flask, Response, request
 import requests
 import hashlib
 import redis
+import html
 
 
 app = Flask(__name__)
@@ -14,7 +15,8 @@ default_name = 'Joe Bloggs 2'
 @app.route('/monster/<name>')
 def get_identicon(name):
     
-    image = cache.get(name)
+    name = html.escape(name, quote=True)
+    image =  cache.get(name)
 
     if(image is None):
         print ('Chache miss', flush=True)
@@ -28,7 +30,7 @@ def mainpage():
    name = default_name
 
    if request.method == 'POST':
-       name = request.form['name']
+       name = html.escape( request.form['name'], quote=True)
     
     
    salted_name = salt + name
